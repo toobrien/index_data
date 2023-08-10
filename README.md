@@ -1,0 +1,1 @@
+performs daily updates from yfinance on index ohlc obtained from firstratedata
