@@ -9,8 +9,8 @@ from    time        import  time
 if __name__ == "__main__":
 
     t0      = time()
-    mode    = argv[1]
-    header  = False if mode == "init" else True 
+    mode    = argv[1]   if len(argv) > 1    else None
+    header  = False     if mode == "init"   else True 
 
     for dfn in FILES:
 
