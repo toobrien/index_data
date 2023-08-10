@@ -1,12 +1,14 @@
 
-from    config      import  FILES, COLUMNS, DT_FMT
+from    config      import  FILES, COLUMNS, ID_FMT, DLY_FMT
 from    polars      import  col, from_pandas, read_csv
 from    yfinance    import  Ticker
 from    sys         import  argv
+from    time        import  time
 
 
 if __name__ == "__main__":
 
+    t0      = time()
     mode    = argv[1]
     header  = False if mode == "init" else True 
 
@@ -16,6 +18,7 @@ if __name__ == "__main__":
         in_fn       = dfn[1]
         out_fn      = dfn[2]
         yf_ticker   = dfn[3]
+        fmt         = ID_FMT if "d" not in interval else DLY_FMT
 
         if mode != "init":
 
@@ -41,21 +44,23 @@ if __name__ == "__main__":
                     }
 
         hist = hist.rename(name_map).select(COLUMNS)
-        hist = hist.with_columns(hist[COLUMNS[0]].dt.strftime(DT_FMT))
+        hist = hist.with_columns(hist[COLUMNS[0]].dt.strftime(fmt))
 
         last_ts = df.item(-1, 0)
 
         new_recs = hist.filter(col(COLUMNS[0]) > last_ts)
 
+        '''
         print(interval)
         print(df.tail())
         print(hist.head())
         print(new_recs.head())
+        '''
 
         df = df.vstack(new_recs)
 
-        print(df.tail())
+        # print(df.tail())
 
         df.write_csv(file = out_fn)
 
-        pass
+    print(f"elapsed: {time() - t0:0.1f}")
