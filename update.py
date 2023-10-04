@@ -33,7 +33,7 @@ if __name__ == "__main__":
         
         if hist.is_empty():
 
-            # interval not supported
+            # interval not supported or some other error
 
             continue
 
@@ -42,13 +42,10 @@ if __name__ == "__main__":
                         hist_cols[i] : COLUMNS[i]
                         for i in range(len(hist_cols))    
                     }
-
-        hist = hist.rename(name_map).select(COLUMNS)
-        hist = hist.with_columns(hist[COLUMNS[0]].dt.strftime(fmt))
-
-        last_ts = df.item(-1, 0)
-
-        new_recs = hist.filter(col(COLUMNS[0]) > last_ts)
+        hist        = hist.rename(name_map).select(COLUMNS)
+        hist        = hist.with_columns(hist[COLUMNS[0]].dt.strftime(fmt))
+        last_ts     = df.item(-1, 0)
+        new_recs    = hist.filter(col(COLUMNS[0]) > last_ts)
 
         '''
         print(interval)
